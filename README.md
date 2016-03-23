@@ -3,7 +3,7 @@ This is a demo project implementing [React Challenge #1](http://jsraccoon.ru/rea
 
 ## Demo
 
-Click [here](kulikov.pp.ua/polymer-sort-and-search/).
+Click [here](http://kulikov.pp.ua/polymer-sort-and-search/). Supports all modern browsers including IE10+.
 
 ## Installation
 
