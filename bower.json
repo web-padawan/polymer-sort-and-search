@@ -2,7 +2,6 @@
   "name": "polymer-sort-and-search",
   "dependencies": {
     "iron-elements": "PolymerElements/iron-elements#^1.0.0",
-    "polymer": "Polymer/polymer#^1.2.0",
-    "repage": "~2.0.2"
+    "polymer": "Polymer/polymer#^1.2.0"
   }
 }
