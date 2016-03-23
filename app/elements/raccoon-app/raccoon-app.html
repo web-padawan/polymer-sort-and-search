@@ -1,0 +1,68 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="raccoon-app">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      :host .rc-intro {
+        background-color: #222;
+        padding: 2em;
+        text-align: center;
+        margin-bottom: 3em;
+      }
+
+      :host .rc-img {
+        display: inline-block;
+        max-width: 50px;
+        margin: 0;
+      }
+
+      :host .rc-title {
+        font-size: 5rem;
+        margin-top: 3rem;
+        color: #fff;
+        font-family: 'Open Sans';
+        font-weight: 700;
+        letter-spacing: -2px;
+      }
+
+      :host .rc-description {
+        margin-top: 2rem;
+        font-size: 2rem;
+        color: #ccc;
+      }
+
+    </style>
+
+    <div class="container-fluid rc-intro">
+      <div class="container">
+        <img class="rc-img" src="../../images/react.svg" alt="">
+        <h1 class="rc-title">React Challenge</h1>
+        <p class="rc-description">Поиск и сортировка данных</p>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'raccoon-app',
+
+        properties: {
+          userData: {
+            type: Array,
+            value: 'pro',
+            notify: true
+          }
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

@@ -1,0 +1,34 @@
+<script src="../bower_components/repage/repage.js"></script>
+<script>
+  window.addEventListener('WebComponentsReady', function() {
+
+    // Removes end / from app.baseUrl which page.base requires for production
+    if (window.location.port === '') {  // if production
+      page.base(app.baseUrl.replace(/\/$/, ''));
+    }
+
+    // Routes
+    page('*', function(ctx, next) {
+      next();
+    });
+
+    page('/', function() {
+      app.route = 'home';
+    });
+
+    page(app.baseUrl, function() {
+      app.route = 'home';
+    });
+
+    // 404
+    page('*', function() {
+      app.route = 'home';
+    });
+
+    // add #! before urls
+    page({
+      hashbang: true
+    });
+
+  });
+</script>
