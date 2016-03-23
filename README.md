@@ -3,8 +3,9 @@ This is a demo project implementing [React Challenge #1](http://jsraccoon.ru/rea
 
 ## Installation
 
-* npm i -g gulp
+* npm i -g gulp bower
 * npm i
+* bower install
 * gulp
 * gulp serve
 
