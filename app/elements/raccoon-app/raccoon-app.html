@@ -125,7 +125,7 @@
                   </tr>
                   <tr>
                     <td>Favorite animal:</td>
-                    <td>[[selected.animal]]</td>
+                    <td>[[selected.image]]</td>
                   </tr>
                   <tr>
                     <td>Phone:</td>
@@ -186,12 +186,21 @@
           sortObj: {
             type: Object,
             notify: true,
-            value: function() { return {}; }
+            value: function() {
+              return {
+                type: 'name',
+                order: 'ASC'
+              };
+            }
           },
           selected: {
             type: Object,
             notify: true,
-            value: function() { return {}; }
+            value: function() {
+              return {
+                image: 'sheep'
+              };
+            }
           }
         },
 
@@ -214,7 +223,12 @@
         // handle ajax response
         _getUsers: function(event, resObj) {
           if (!resObj || !resObj.response || !Array.isArray(resObj.response)) return;
-          this.selected = resObj.response[0];
+
+          var data = resObj.response.sort(function(a,b) {
+            return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
+          });
+
+          this.selected = data[0];
         },
 
         // update selected user
