@@ -1,0 +1,1 @@
+!function(e){"use strict";var n=e.querySelector("#app");n.baseUrl="/",""===window.location.port&&(n.baseUrl="/polymer-sort-and-search/"),n.addEventListener("dom-change",function(){}),window.addEventListener("WebComponentsReady",function(){})}(document);
