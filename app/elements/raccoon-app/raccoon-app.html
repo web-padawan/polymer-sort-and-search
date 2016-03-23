@@ -73,7 +73,7 @@
 
     <div class="container-fluid rc-intro">
       <div class="container">
-        <img class="rc-img" src="../../images/react.svg" alt="">
+        <img class="rc-img" src="[[imagesUrl]]/react.svg" alt="">
         <h1 class="rc-title">React Challenge</h1>
         <p class="rc-description">Поиск и сортировка данных</p>
       </div>
@@ -114,7 +114,7 @@
         <!-- user details -->
         <div class="col-sm-4 col-md-3 col-lg-2">
           <div class="thumbnail">
-            <img src="../../images/[[selected.image]].svg">
+            <img src="[[imagesUrl]]/[[selected.image]].svg">
             <div class="thumbnail-caption">
               <h3>[[selected.name]]</h3>
               <table class="user-info table table-responsive">
@@ -156,7 +156,7 @@
             <tbody>
               <template id="users" is="dom-repeat" items="{{user-data}}" filter="{{_search(searchString)}}" sort="{{_sort(sortObj)}}">
                 <tr on-click="_select">
-                  <td><img class="user-image" src="../../images/{{item.image}}.svg"></td>
+                  <td><img class="user-image" src="[[imagesUrl]]/images/{{item.image}}.svg"></td>
                   <td>{{item.name}}</td>
                   <td>{{item.age}}</td>
                   <td><span>8</span> <span>{{item.phone}}</span></td>
@@ -205,7 +205,12 @@
           apiUrl: {
             type: String,
             notify: true,
-            value: window.location.href + '/data.json'
+            value: window.location.href + 'data.json'
+          },
+          imagesUrl: {
+            type: String,
+            notify: true,
+            value: window.location.href + 'images'
           }
         },
 
