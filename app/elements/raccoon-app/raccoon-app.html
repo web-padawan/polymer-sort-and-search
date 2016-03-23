@@ -2,16 +2,16 @@
 
 <dom-module id="raccoon-app">
   <template>
-    <style include="shared-styles">
+    <style>
       :host {
         display: block;
       }
 
       :host .rc-intro {
         background-color: #222;
-        padding: 2em;
+        padding: 2rem;
         text-align: center;
-        margin-bottom: 3em;
+        margin-bottom: 3rem;
       }
 
       :host .rc-img {
@@ -35,7 +35,41 @@
         color: #ccc;
       }
 
+      :host .user-list {
+        border: 1px solid #ddd;
+      }
+
+      :host .user-list tbody tr {
+        cursor: pointer;
+        transition: background-color .1s;
+      }
+
+      :host .user-list tbody tr:hover {
+        background-color: #eee;
+      }
+
+      :host .user-image {
+        max-width: 60px;
+        max-height: 60px;
+      }
+
+      :host .thumbnail {
+        text-align: center;
+        padding: 2rem 1rem;
+      }
+
+      :host .toolbar {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      :host .toolbar .btn {
+        margin-right: 1rem;
+      }
+
     </style>
+
+    <iron-ajax auto url="/public/data.json" method="GET" handle-as="json" last-response="{{user-data}}"></iron-ajax>
 
     <div class="container-fluid rc-intro">
       <div class="container">
@@ -45,6 +79,96 @@
       </div>
     </div>
 
+    <div class="container-fluid">
+
+      <!-- search widget -->
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="searchbar form-group">
+            <input value="{{searchString::input}}" type="text" class="form-control" placeholder="Search people by name...">
+          </div>
+        </div>
+      </div>
+      <!-- end search widget -->
+
+      <!-- sort widget -->
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="toolbar">
+            <button id="byName" class="btn btn-default">
+              <i class="icon fa fa-sort-alpha-asc"></i>
+              <span>Sort by name</span>
+            </button>
+            <button id="byAge" class="btn btn-default">
+              <i class="icon fa fa-sort-numeric-desc"></i>
+              <span>Sort by age</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- end sort widget -->
+
+      <!-- page content -->
+      <div class="row">
+
+        <!-- user details -->
+        <div class="col-sm-4 col-md-3 col-lg-2">
+          <div class="thumbnail">
+            <img src="../../images/raccoon.svg">
+            <div class="thumbnail-caption">
+              <h3>Ada Bowers</h3>
+              <table class="user-info table table-responsive">
+                <tbody>
+                  <tr>
+                    <td>Age:</td>
+                    <td>28</td>
+                  </tr>
+                  <tr>
+                    <td>Favorite animal:</td>
+                    <td>raccoon</td>
+                  </tr>
+                  <tr>
+                    <td>Phone:</td>
+                    <td><span>8 </span><span>(882) 413-7711</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p>
+                <b>Favorite phrase:</b>
+                <span>Uzmavov jatvanci kipvaf avhazze ju wi tigekaw zoci ra ihjaro iw ihzu nefnarib gi hiuhohe.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- end user details -->
+
+        <!-- users list -->
+        <div class="col-sm-8 col-md-9 col-lg-10">
+          <table class="user-list table table-striped">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Phone</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template is="dom-repeat" items="{{user-data}}" filter="{{_search(searchString)}}" sort="{{_sort(sortObj)}}">
+                <tr>
+                <td><img class="user-image" src="../../images/{{item.image}}.svg"></td>
+                <td>{{item.name}}</td>
+                <td>{{item.age}}</td>
+                <td>{{item.phone}}</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+        <!-- end users list -->
+      </div>
+    </div>
   </template>
 
   <script>
@@ -54,14 +178,85 @@
       Polymer({
         is: 'raccoon-app',
 
+        listeners: {
+          'byName.click' : 'sortName',
+          'byAge.click'  : 'sortAge'
+        },
+
         properties: {
           userData: {
             type: Array,
             value: 'pro',
             notify: true
+          },
+          sortObj: {
+           type: Object,
+           notify: true,
+           value: function() { return {}; }
+          }
+        },
+
+        // configure sort by name
+        sortName: function() {
+          this.sortObj = {
+            type: 'name',
+            order: this.sortObj.type !== 'name' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
+          };
+        },
+
+        // configure sort by age
+        sortAge: function() {
+          this.sortObj = {
+            type: 'age',
+            order: this.sortObj.type !== 'age' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
+          };
+        },
+
+        // return a sort function
+        _sort: function(sortObj) {
+          var type  = sortObj.type;
+          var order = sortObj.order;
+          switch(type) {
+            case 'name':
+              return function(a, b) {
+                var swap;
+                if (order === 'DESC') {
+                  swap = a;
+                  a = b;
+                  b = swap;
+                }
+                if (a.name === b.name) return 0;
+                return a.name < b.name ? -1 : 1;
+              };
+            case 'age':
+              return function(a, b) {
+                var swap;
+                if (order === 'DESC') {
+                  swap = a;
+                  a = b;
+                  b = swap;
+                }
+                if (a.age === b.age) return 0;
+                return b.age - a.age;
+              };
+            default:
+              return function() { return 0 };
+          }
+        },
+
+        // return a filter function for the search string
+        _search: function(string) {
+          if (!string) {
+            return null;
+          }
+          else {
+            string = string.toLowerCase();
+
+            return function(item) {
+              return item.name.toLowerCase().indexOf(string) != -1;
+            };
           }
         }
-
       });
     })();
   </script>
