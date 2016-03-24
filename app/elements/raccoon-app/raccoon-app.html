@@ -107,13 +107,13 @@
 
         <div class="col-sm-4 col-md-3 col-lg-2">
           <!-- user details -->
-          <template is="dom-if" if="{{selected.name}}">
-            <raccoon-selected item="[[selected]]"></raccoon-selected>
+          <template is="dom-if" if="{{active.name}}">
+            <raccoon-active-user item="[[active]]"></raccoon-active-user>
           </template>
           <!-- end user details -->
 
           <!-- no matching users message -->
-          <template is="dom-if" if="{{!selected.name}}">
+          <template is="dom-if" if="{{!active.name}}">
             <h3>Nothing found :(</h3>
           </template>
           <!-- end message -->
@@ -177,7 +177,7 @@
               };
             }
           },
-          selected: {
+          active: {
             type: Object,
             notify: true,
             value: function() {
@@ -208,16 +208,16 @@
           'observeSortObj(sortObj, users, search)',
         ],
 
-        // observe search string changes to update selected user
+        // observe search string changes to update active user
         observeSearch: function(search, users) {
           var found = users.filter(function(item) {
             return item.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
           });
 
-          this.selected = (found.length) ? found[0] : {'image': 'empty'};
+          this.active = (found.length) ? found[0] : {'image': 'empty'};
         },
 
-        // observe sort criteria changes to update selected user
+        // observe sort criteria changes to update active user
         observeSortObj: function(sortObj, users, search) {
           var type  = sortObj.type;
           var order = sortObj.order;
@@ -258,7 +258,7 @@
             });
           }
 
-          this.selected = (filtered.length) ? filtered[0] : {'image': 'empty'};
+          this.active = (filtered.length) ? filtered[0] : {'image': 'empty'};
         },
 
         // configure sort by name
@@ -286,16 +286,16 @@
           });
 
           this.users = data;
-          this.selected = data[0];
+          this.active = data[0];
         },
 
-        // update selected user
+        // update active user
         _select: function(e) {
-          var selected = this.$.users.items.filter(function(item) {
+          var active = this.$.users.items.filter(function(item) {
             return item.name === e.model.item.name;
           });
 
-          this.selected = selected[0];
+          this.active = active[0];
         },
 
         // return a filter function for the search string
