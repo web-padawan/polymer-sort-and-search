@@ -53,11 +53,6 @@
         max-height: 60px;
       }
 
-      :host .thumbnail {
-        text-align: center;
-        padding: 2rem 1rem;
-      }
-
       :host .toolbar {
         margin-top: 1rem;
         margin-bottom: 1rem;
@@ -66,7 +61,6 @@
       :host .toolbar .btn {
         margin-right: 1rem;
       }
-
     </style>
 
     <iron-ajax auto url="[[apiUrl]]" method="GET" handle-as="json" on-response="_getUsers" last-response="{{users}}"></iron-ajax>
@@ -111,41 +105,19 @@
       <!-- page content -->
       <div class="row">
 
-        <!-- user details -->
         <div class="col-sm-4 col-md-3 col-lg-2">
+          <!-- user details -->
           <template is="dom-if" if="{{selected.name}}">
-            <div class="thumbnail">
-              <img src="[[imagesUrl]]/[[selected.image]].svg">
-              <div class="thumbnail-caption">
-                <h3>[[selected.name]]</h3>
-                <table class="user-info table table-responsive">
-                  <tbody>
-                    <tr>
-                      <td>Age:</td>
-                      <td>[[selected.age]]</td>
-                    </tr>
-                    <tr>
-                      <td>Favorite animal:</td>
-                      <td>[[selected.image]]</td>
-                    </tr>
-                    <tr>
-                      <td>Phone:</td>
-                      <td><span>8</span> <span>[[selected.phone]]</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-                <p>
-                  <b>Favorite phrase:</b>
-                  <span>[[selected.phrase]]</span>
-                </p>
-              </div>
-            </div>
+            <raccoon-selected item="[[selected]]"></raccoon-selected>
           </template>
+          <!-- end user details -->
+
+          <!-- no matching users message -->
           <template is="dom-if" if="{{!selected.name}}">
             <h3>Nothing found :(</h3>
           </template>
+          <!-- end message -->
         </div>
-        <!-- end user details -->
 
         <!-- users list -->
         <div class="col-sm-8 col-md-9 col-lg-10">

@@ -1,0 +1,64 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="raccoon-selected" attributes="item">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      :host .thumbnail {
+        text-align: center;
+        padding: 2rem 1rem;
+      }
+    </style>
+
+    <div class="thumbnail">
+      <img src="[[imagesUrl]]/[[item.image]].svg">
+      <div class="thumbnail-caption">
+        <h3>[[item.name]]</h3>
+        <table class="user-info table table-responsive">
+          <tbody>
+            <tr>
+              <td>Age:</td>
+              <td>[[item.age]]</td>
+            </tr>
+            <tr>
+              <td>Favorite animal:</td>
+              <td>[[item.image]]</td>
+            </tr>
+            <tr>
+              <td>Phone:</td>
+              <td><span>8</span> <span>[[item.phone]]</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <b>Favorite phrase:</b>
+          <span>[[item.phrase]]</span>
+        </p>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'raccoon-selected',
+
+        properties: {
+          item: {
+            type: Object
+          },
+          imagesUrl: {
+            type: String,
+            notify: true,
+            value: window.location.href + 'images'
+          },
+        }
+      });
+    })();
+  </script>
+</dom-module>
