@@ -8660,7 +8660,7 @@ if (!window.Promise) {
 </script>
 
 
-<dom-module id="raccoon-selected" attributes="item" assetpath="raccoon-selected/">
+<dom-module id="raccoon-active-user" assetpath="raccoon-active-user/">
   <template>
     <style>
       :host {
@@ -8706,7 +8706,7 @@ if (!window.Promise) {
       'use strict';
 
       Polymer({
-        is: 'raccoon-selected',
+        is: 'raccoon-active-user',
 
         properties: {
           item: {
@@ -8717,6 +8717,73 @@ if (!window.Promise) {
             notify: true,
             value: window.location.href + 'images'
           },
+        }
+      });
+    })();
+  </script>
+</dom-module>
+<dom-module id="raccoon-toolbar" assetpath="raccoon-toolbar/">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      :host .toolbar {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      :host .toolbar .btn {
+        margin-right: 1rem;
+      }
+    </style>
+
+    <div class="toolbar">
+      <button id="byName" class="btn btn-default">
+        <i class="icon fa fa-sort-alpha-asc"></i>
+        <span>Sort by name</span>
+      </button>
+      <button id="byAge" class="btn btn-default">
+        <i class="icon fa fa-sort-numeric-desc"></i>
+        <span>Sort by age</span>
+      </button>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'raccoon-toolbar',
+
+        listeners: {
+          'byName.click' : '_sortName',
+          'byAge.click'  : '_sortAge'
+        },
+
+        properties: {
+          sortObj: {
+            type: Object,
+            notify: true
+          },
+        },
+
+        // configure sort by name
+        _sortName: function() {
+          this.sortObj = {
+            type: 'name',
+            order: this.sortObj.type !== 'name' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
+          };
+        },
+
+        // configure sort by age
+        _sortAge: function() {
+          this.sortObj = {
+            type: 'age',
+            order: this.sortObj.type !== 'age' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
+          };
         }
       });
     })();
@@ -8807,35 +8874,26 @@ if (!window.Promise) {
       </div>
       
 
-      
       <div class="row">
         <div class="col-sm-12">
-          <div class="toolbar">
-            <button id="byName" class="btn btn-default">
-              <i class="icon fa fa-sort-alpha-asc"></i>
-              <span>Sort by name</span>
-            </button>
-            <button id="byAge" class="btn btn-default">
-              <i class="icon fa fa-sort-numeric-desc"></i>
-              <span>Sort by age</span>
-            </button>
-          </div>
+          
+          <raccoon-toolbar sort-obj="{{sortObj}}"></raccoon-toolbar>
+          
         </div>
       </div>
-      
 
       
       <div class="row">
 
         <div class="col-sm-4 col-md-3 col-lg-2">
           
-          <template is="dom-if" if="{{selected.name}}">
-            <raccoon-selected item="[[selected]]"></raccoon-selected>
+          <template is="dom-if" if="{{active.name}}">
+            <raccoon-active-user item="[[active]]"></raccoon-active-user>
           </template>
           
 
           
-          <template is="dom-if" if="{{!selected.name}}">
+          <template is="dom-if" if="{{!active.name}}">
             <h3>Nothing found :(</h3>
           </template>
           
@@ -8878,11 +8936,6 @@ if (!window.Promise) {
       Polymer({
         is: 'raccoon-app',
 
-        listeners: {
-          'byName.click' : '_sortName',
-          'byAge.click'  : '_sortAge'
-        },
-
         properties: {
           users: {
             type: Array,
@@ -8899,7 +8952,7 @@ if (!window.Promise) {
               };
             }
           },
-          selected: {
+          active: {
             type: Object,
             notify: true,
             value: function() {
@@ -8930,16 +8983,16 @@ if (!window.Promise) {
           'observeSortObj(sortObj, users, search)',
         ],
 
-        // observe search string changes to update selected user
+        // observe search string changes to update active user
         observeSearch: function(search, users) {
           var found = users.filter(function(item) {
             return item.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
           });
 
-          this.selected = (found.length) ? found[0] : {'image': 'empty'};
+          this.active = (found.length) ? found[0] : {'image': 'empty'};
         },
 
-        // observe sort criteria changes to update selected user
+        // observe sort criteria changes to update active user
         observeSortObj: function(sortObj, users, search) {
           var type  = sortObj.type;
           var order = sortObj.order;
@@ -8980,23 +9033,7 @@ if (!window.Promise) {
             });
           }
 
-          this.selected = (filtered.length) ? filtered[0] : {'image': 'empty'};
-        },
-
-        // configure sort by name
-        _sortName: function() {
-          this.sortObj = {
-            type: 'name',
-            order: this.sortObj.type !== 'name' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
-          };
-        },
-
-        // configure sort by age
-        _sortAge: function() {
-          this.sortObj = {
-            type: 'age',
-            order: this.sortObj.type !== 'age' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
-          };
+          this.active = (filtered.length) ? filtered[0] : {'image': 'empty'};
         },
 
         // handle ajax response
@@ -9008,16 +9045,16 @@ if (!window.Promise) {
           });
 
           this.users = data;
-          this.selected = data[0];
+          this.active = data[0];
         },
 
-        // update selected user
+        // update active user
         _select: function(e) {
-          var selected = this.$.users.items.filter(function(item) {
+          var active = this.$.users.items.filter(function(item) {
             return item.name === e.model.item.name;
           });
 
-          this.selected = selected[0];
+          this.active = active[0];
         },
 
         // return a filter function for the search string
