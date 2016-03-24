@@ -159,7 +159,7 @@
               </tr>
             </thead>
             <tbody>
-              <template id="users" is="dom-repeat" items="{{users}}" filter="{{searchUser(search)}}" sort="{{sortUsers(sortObj)}}">
+              <template id="users" is="dom-repeat" items="{{users}}" filter="{{searchUser(search)}}">
                 <tr on-click="_select">
                   <td><img class="user-image" src="[[imagesUrl]]/{{item.image}}.svg"></td>
                   <td>{{item.name}}</td>
@@ -232,16 +232,61 @@
         },
 
         observers: [
-          'observeSearch(search, users)'
+          'observeSearch(search, users)',
+          'observeSortObj(sortObj, users, search)',
         ],
 
-        // observe input changes to update selected user
+        // observe search string changes to update selected user
         observeSearch: function(search, users) {
           var found = users.filter(function(item) {
             return item.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
           });
 
           this.selected = (found.length) ? found[0] : {'image': 'empty'};
+        },
+
+        // observe sort criteria changes to update selected user
+        observeSortObj: function(sortObj, users, search) {
+          var type  = sortObj.type;
+          var order = sortObj.order;
+
+          switch (type) {
+            case 'name':
+              users.sort(function(a, b) {
+                var swap;
+                if (order === 'DESC') {
+                  swap = a;
+                  a = b;
+                  b = swap;
+                }
+                if (a.name === b.name) return 0;
+                return a.name < b.name ? -1 : 1;
+              });
+            break;
+            case 'age':
+              users.sort(function(a, b) {
+                var swap;
+                if (order === 'DESC') {
+                  swap = a;
+                  a = b;
+                  b = swap;
+                }
+                if (a.age === b.age) return 0;
+                return b.age - a.age;
+              });
+            break;
+          }
+
+          this.$.users.render();
+
+          var filtered = users;
+          if (search !== '') {
+            filtered = users.filter(function(item) {
+              return item.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+            });
+          }
+
+          this.selected = (filtered.length) ? filtered[0] : {'image': 'empty'};
         },
 
         // configure sort by name
@@ -279,38 +324,6 @@
           });
 
           this.selected = selected[0];
-        },
-
-        // return a sort function
-        sortUsers: function(sortObj) {
-          var type  = sortObj.type;
-          var order = sortObj.order;
-          switch(type) {
-            case 'name':
-              return function(a, b) {
-                var swap;
-                if (order === 'DESC') {
-                  swap = a;
-                  a = b;
-                  b = swap;
-                }
-                if (a.name === b.name) return 0;
-                return a.name < b.name ? -1 : 1;
-              };
-            case 'age':
-              return function(a, b) {
-                var swap;
-                if (order === 'DESC') {
-                  swap = a;
-                  a = b;
-                  b = swap;
-                }
-                if (a.age === b.age) return 0;
-                return b.age - a.age;
-              };
-            default:
-              return function() { return 0 };
-          }
         },
 
         // return a filter function for the search string
