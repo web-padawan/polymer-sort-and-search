@@ -8729,7 +8729,7 @@ if (!window.Promise) {
 
     </style>
 
-    <iron-ajax auto="" url="[[apiUrl]]" method="GET" handle-as="json" on-response="_getUsers" last-response="{{user-data}}"></iron-ajax>
+    <iron-ajax auto="" url="[[apiUrl]]" method="GET" handle-as="json" on-response="_getUsers" last-response="{{users}}"></iron-ajax>
 
     <div class="container-fluid rc-intro">
       <div class="container">
@@ -8745,7 +8745,7 @@ if (!window.Promise) {
       <div class="row">
         <div class="col-sm-12">
           <div class="searchbar form-group">
-            <input value="{{searchString::input}}" type="text" class="form-control" placeholder="Search people by name...">
+            <input id="search" value="{{search::input}}" type="text" class="form-control" placeholder="Search people by name...">
           </div>
         </div>
       </div>
@@ -8773,32 +8773,37 @@ if (!window.Promise) {
 
         
         <div class="col-sm-4 col-md-3 col-lg-2">
-          <div class="thumbnail">
-            <img src="[[imagesUrl]]/[[selected.image]].svg">
-            <div class="thumbnail-caption">
-              <h3>[[selected.name]]</h3>
-              <table class="user-info table table-responsive">
-                <tbody>
-                  <tr>
-                    <td>Age:</td>
-                    <td>[[selected.age]]</td>
-                  </tr>
-                  <tr>
-                    <td>Favorite animal:</td>
-                    <td>[[selected.image]]</td>
-                  </tr>
-                  <tr>
-                    <td>Phone:</td>
-                    <td><span>8</span> <span>[[selected.phone]]</span></td>
-                  </tr>
-                </tbody>
-              </table>
-              <p>
-                <b>Favorite phrase:</b>
-                <span>[[selected.phrase]]</span>
-              </p>
+          <template is="dom-if" if="{{selected.name}}">
+            <div class="thumbnail">
+              <img src="[[imagesUrl]]/[[selected.image]].svg">
+              <div class="thumbnail-caption">
+                <h3>[[selected.name]]</h3>
+                <table class="user-info table table-responsive">
+                  <tbody>
+                    <tr>
+                      <td>Age:</td>
+                      <td>[[selected.age]]</td>
+                    </tr>
+                    <tr>
+                      <td>Favorite animal:</td>
+                      <td>[[selected.image]]</td>
+                    </tr>
+                    <tr>
+                      <td>Phone:</td>
+                      <td><span>8</span> <span>[[selected.phone]]</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p>
+                  <b>Favorite phrase:</b>
+                  <span>[[selected.phrase]]</span>
+                </p>
+              </div>
             </div>
-          </div>
+          </template>
+          <template is="dom-if" if="{{!selected.name}}">
+            <h3>Nothing found :(</h3>
+          </template>
         </div>
         
 
@@ -8814,7 +8819,7 @@ if (!window.Promise) {
               </tr>
             </thead>
             <tbody>
-              <template id="users" is="dom-repeat" items="{{user-data}}" filter="{{_search(searchString)}}" sort="{{_sort(sortObj)}}">
+              <template id="users" is="dom-repeat" items="{{users}}" filter="{{searchUser(search)}}">
                 <tr on-click="_select">
                   <td><img class="user-image" src="[[imagesUrl]]/{{item.image}}.svg"></td>
                   <td>{{item.name}}</td>
@@ -8827,6 +8832,8 @@ if (!window.Promise) {
         </div>
         
       </div>
+      
+
     </div>
   </template>
 
@@ -8838,11 +8845,16 @@ if (!window.Promise) {
         is: 'raccoon-app',
 
         listeners: {
-          'byName.click' : 'sortName',
-          'byAge.click'  : 'sortAge'
+          'byName.click' : '_sortName',
+          'byAge.click'  : '_sortAge'
         },
 
         properties: {
+          users: {
+            type: Array,
+            notify: true,
+            value: function() { return [] }
+          },
           sortObj: {
             type: Object,
             notify: true,
@@ -8858,7 +8870,7 @@ if (!window.Promise) {
             notify: true,
             value: function() {
               return {
-                image: 'sheep'
+                image: 'empty'
               };
             }
           },
@@ -8871,11 +8883,74 @@ if (!window.Promise) {
             type: String,
             notify: true,
             value: window.location.href + 'images'
+          },
+          search: {
+            type: String,
+            value: '',
+            notify: true
           }
         },
 
+        observers: [
+          'observeSearch(search, users)',
+          'observeSortObj(sortObj, users, search)',
+        ],
+
+        // observe search string changes to update selected user
+        observeSearch: function(search, users) {
+          var found = users.filter(function(item) {
+            return item.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+          });
+
+          this.selected = (found.length) ? found[0] : {'image': 'empty'};
+        },
+
+        // observe sort criteria changes to update selected user
+        observeSortObj: function(sortObj, users, search) {
+          var type  = sortObj.type;
+          var order = sortObj.order;
+
+          switch (type) {
+            case 'name':
+              users.sort(function(a, b) {
+                var swap;
+                if (order === 'DESC') {
+                  swap = a;
+                  a = b;
+                  b = swap;
+                }
+                if (a.name === b.name) return 0;
+                return a.name < b.name ? -1 : 1;
+              });
+            break;
+            case 'age':
+              users.sort(function(a, b) {
+                var swap;
+                if (order === 'DESC') {
+                  swap = a;
+                  a = b;
+                  b = swap;
+                }
+                if (a.age === b.age) return 0;
+                return b.age - a.age;
+              });
+            break;
+          }
+
+          this.$.users.render();
+
+          var filtered = users;
+          if (search !== '') {
+            filtered = users.filter(function(item) {
+              return item.name.toLowerCase().indexOf(search.toLowerCase()) !== -1;
+            });
+          }
+
+          this.selected = (filtered.length) ? filtered[0] : {'image': 'empty'};
+        },
+
         // configure sort by name
-        sortName: function() {
+        _sortName: function() {
           this.sortObj = {
             type: 'name',
             order: this.sortObj.type !== 'name' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
@@ -8883,7 +8958,7 @@ if (!window.Promise) {
         },
 
         // configure sort by age
-        sortAge: function() {
+        _sortAge: function() {
           this.sortObj = {
             type: 'age',
             order: this.sortObj.type !== 'age' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
@@ -8898,6 +8973,7 @@ if (!window.Promise) {
             return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
           });
 
+          this.users = data;
           this.selected = data[0];
         },
 
@@ -8910,40 +8986,8 @@ if (!window.Promise) {
           this.selected = selected[0];
         },
 
-        // return a sort function
-        _sort: function(sortObj) {
-          var type  = sortObj.type;
-          var order = sortObj.order;
-          switch(type) {
-            case 'name':
-              return function(a, b) {
-                var swap;
-                if (order === 'DESC') {
-                  swap = a;
-                  a = b;
-                  b = swap;
-                }
-                if (a.name === b.name) return 0;
-                return a.name < b.name ? -1 : 1;
-              };
-            case 'age':
-              return function(a, b) {
-                var swap;
-                if (order === 'DESC') {
-                  swap = a;
-                  a = b;
-                  b = swap;
-                }
-                if (a.age === b.age) return 0;
-                return b.age - a.age;
-              };
-            default:
-              return function() { return 0 };
-          }
-        },
-
         // return a filter function for the search string
-        _search: function(string) {
+        searchUser: function(string) {
           if (!string) {
             return null;
           }
