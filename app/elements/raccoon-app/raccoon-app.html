@@ -85,32 +85,23 @@
       </div>
       <!-- end search widget -->
 
-      <!-- sort widget -->
       <div class="row">
         <div class="col-sm-12">
-          <div class="toolbar">
-            <button id="byName" class="btn btn-default">
-              <i class="icon fa fa-sort-alpha-asc"></i>
-              <span>Sort by name</span>
-            </button>
-            <button id="byAge" class="btn btn-default">
-              <i class="icon fa fa-sort-numeric-desc"></i>
-              <span>Sort by age</span>
-            </button>
-          </div>
+          <!-- toolbar -->
+          <raccoon-toolbar sort-obj="{{sortObj}}"></raccoon-toolbar>
+          <!-- end toolbar -->
         </div>
       </div>
-      <!-- end sort widget -->
 
       <!-- page content -->
       <div class="row">
 
         <div class="col-sm-4 col-md-3 col-lg-2">
-          <!-- user details -->
+          <!-- active user -->
           <template is="dom-if" if="{{active.name}}">
             <raccoon-active-user item="[[active]]"></raccoon-active-user>
           </template>
-          <!-- end user details -->
+          <!-- end active user -->
 
           <!-- no matching users message -->
           <template is="dom-if" if="{{!active.name}}">
@@ -155,11 +146,6 @@
 
       Polymer({
         is: 'raccoon-app',
-
-        listeners: {
-          'byName.click' : '_sortName',
-          'byAge.click'  : '_sortAge'
-        },
 
         properties: {
           users: {
@@ -259,22 +245,6 @@
           }
 
           this.active = (filtered.length) ? filtered[0] : {'image': 'empty'};
-        },
-
-        // configure sort by name
-        _sortName: function() {
-          this.sortObj = {
-            type: 'name',
-            order: this.sortObj.type !== 'name' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
-          };
-        },
-
-        // configure sort by age
-        _sortAge: function() {
-          this.sortObj = {
-            type: 'age',
-            order: this.sortObj.type !== 'age' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
-          };
         },
 
         // handle ajax response

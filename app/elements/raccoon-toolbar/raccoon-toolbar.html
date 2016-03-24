@@ -1,0 +1,69 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="raccoon-toolbar">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      :host .toolbar {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      :host .toolbar .btn {
+        margin-right: 1rem;
+      }
+    </style>
+
+    <div class="toolbar">
+      <button id="byName" class="btn btn-default">
+        <i class="icon fa fa-sort-alpha-asc"></i>
+        <span>Sort by name</span>
+      </button>
+      <button id="byAge" class="btn btn-default">
+        <i class="icon fa fa-sort-numeric-desc"></i>
+        <span>Sort by age</span>
+      </button>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'raccoon-toolbar',
+
+        listeners: {
+          'byName.click' : '_sortName',
+          'byAge.click'  : '_sortAge'
+        },
+
+        properties: {
+          sortObj: {
+            type: Object,
+            notify: true
+          },
+        },
+
+        // configure sort by name
+        _sortName: function() {
+          this.sortObj = {
+            type: 'name',
+            order: this.sortObj.type !== 'name' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
+          };
+        },
+
+        // configure sort by age
+        _sortAge: function() {
+          this.sortObj = {
+            type: 'age',
+            order: this.sortObj.type !== 'age' ? 'ASC' : (this.sortObj.order === 'DESC' ? 'ASC' : 'DESC')
+          };
+        }
+      });
+    })();
+  </script>
+</dom-module>
