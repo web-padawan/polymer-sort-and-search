@@ -9355,7 +9355,7 @@ if (!window.Promise) {
     </style>
 
     <div class="thumbnail">
-      <img src="[[imagesUrl]]/[[item.image]].svg">
+      <img src="[[home]]/images/[[item.image]].svg">
       <div class="thumbnail-caption">
         <h3>[[item.name]]</h3>
         <table class="user-info table table-responsive">
@@ -9393,10 +9393,10 @@ if (!window.Promise) {
           item: {
             type: Object
           },
-          imagesUrl: {
+          home: {
             type: String,
             notify: true,
-            value: window.location.href + 'images'
+            value: location.href
           },
         }
       });
@@ -9518,7 +9518,7 @@ if (!window.Promise) {
       }
     </style>
 
-    <iron-ajax auto="" url="[[apiUrl]]" method="GET" handle-as="json" on-response="_getUsers" last-response="{{users}}"></iron-ajax>
+    <iron-ajax auto="" url="[[home]]/data.json" method="GET" handle-as="json" on-response="_getUsers" last-response="{{users}}"></iron-ajax>
 
     <div class="container-fluid rc-intro">
       <div class="container">
@@ -9579,7 +9579,7 @@ if (!window.Promise) {
             <tbody>
               <template id="users" is="dom-repeat" items="{{users}}" filter="{{searchUser(search)}}">
                 <tr on-click="_select">
-                  <td><img class="user-image" src="/images/{{item.image}}.svg"></td>
+                  <td><img class="user-image" src="[[home]]/images/{{item.image}}.svg"></td>
                   <td>{{item.name}}</td>
                   <td>{{item.age}}</td>
                   <td><span>8</span> <span>{{item.phone}}</span></td>
@@ -9627,15 +9627,10 @@ if (!window.Promise) {
               };
             }
           },
-          apiUrl: {
+          home: {
             type: String,
             notify: true,
-            value: window.location.href + 'data.json'
-          },
-          imagesUrl: {
-            type: String,
-            notify: true,
-            value: window.location.href + 'images'
+            value: location.href
           },
           search: {
             type: String,
