@@ -14,7 +14,7 @@
     </style>
 
     <div class="thumbnail">
-      <img src="[[imagesUrl]]/[[item.image]].svg">
+      <img src="[[home]]/images/[[item.image]].svg">
       <div class="thumbnail-caption">
         <h3>[[item.name]]</h3>
         <table class="user-info table table-responsive">
@@ -52,10 +52,10 @@
           item: {
             type: Object
           },
-          imagesUrl: {
+          home: {
             type: String,
             notify: true,
-            value: window.location.href + 'images'
+            value: location.href
           },
         }
       });
