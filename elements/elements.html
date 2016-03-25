@@ -9579,7 +9579,7 @@ if (!window.Promise) {
             <tbody>
               <template id="users" is="dom-repeat" items="{{users}}" filter="{{searchUser(search)}}">
                 <tr on-click="_select">
-                  <td><img class="user-image" src="[[imagesUrl]]/{{item.image}}.svg"></td>
+                  <td><img class="user-image" src="/images/{{item.image}}.svg"></td>
                   <td>{{item.name}}</td>
                   <td>{{item.age}}</td>
                   <td><span>8</span> <span>{{item.phone}}</span></td>
