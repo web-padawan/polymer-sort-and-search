@@ -15,6 +15,7 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><meta charset="UTF-8">
+
 </head><body><div hidden="" by-vulcanize=""><script>(function () {
 function resolve() {
 document.body.removeAttribute('unresolved');
@@ -7636,6 +7637,11 @@ this._insertChildren();
 this.fire('dom-change');
 }
 });</script>
+<dom-module id="bootstrap" assetpath="../styles/">
+  <link rel="import" type="css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="import" type="css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="import" type="css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&amp;subset=latin,cyrillic">
+</dom-module>
 <script>function MakePromise (asap) {
   function Promise(fn) {
 		if (typeof this !== 'object' || typeof fn !== 'function') throw new TypeError();
@@ -9343,7 +9349,7 @@ if (!window.Promise) {
 </dom-module>
 <dom-module id="raccoon-active-user" assetpath="raccoon-active-user/">
   <template>
-    <style>
+    <style include="bootstrap">
       :host {
         display: block;
       }
@@ -9405,7 +9411,7 @@ if (!window.Promise) {
 </dom-module>
 <dom-module id="raccoon-toolbar" assetpath="raccoon-toolbar/">
   <template>
-    <style>
+    <style include="bootstrap">
       :host {
         display: block;
       }
@@ -9472,7 +9478,7 @@ if (!window.Promise) {
 </dom-module>
 <dom-module id="raccoon-app" assetpath="raccoon-app/">
   <template>
-    <style>
+    <style include="bootstrap">
       :host {
         display: block;
       }
