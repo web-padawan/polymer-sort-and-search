@@ -96,6 +96,18 @@ var optimizeHtmlTask = function(src, dest) {
     }));
 };
 
+// Compile custom stylesheets
+gulp.task('sass', function() {
+  return gulp.src('sass/**/*.scss')
+    .pipe($.sass({
+      includePaths: ['node_modules/bootstrap-sass/assets/stylesheets']
+    }))
+    .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
+    .pipe(gulp.dest('.tmp/styles'))
+    .pipe($.minifyCss())
+    .pipe(gulp.dest('app/styles'))
+});
+
 // Compile and automatically prefix stylesheets
 gulp.task('styles', function() {
   return styleTask('styles', ['**/*.css']);
