@@ -227,7 +227,7 @@ gulp.task('clean', function() {
 });
 
 // Watch files for changes & reload
-gulp.task('serve', ['styles', 'elements'], function() {
+gulp.task('serve', ['sass', 'styles', 'elements'], function() {
   browserSync({
     port: 5000,
     notify: false,
@@ -251,6 +251,7 @@ gulp.task('serve', ['styles', 'elements'], function() {
   });
 
   gulp.watch(['app/**/*.html'], reload);
+  gulp.watch(['sass/**/*.scss'], ['sass', reload]);
   gulp.watch(['app/styles/**/*.css'], ['styles', reload]);
   gulp.watch(['app/elements/**/*.css'], ['elements', reload]);
   gulp.watch(['app/images/**/*'], reload);
@@ -283,7 +284,8 @@ gulp.task('serve:dist', ['default'], function() {
 gulp.task('default', ['clean'], function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
   runSequence(
-    ['ensureFiles', 'copy', 'styles'],
+    ['ensureFiles', 'copy', 'sass'],
+    'styles',
     'elements',
     ['images', 'fonts', 'html'],
     'vulcanize', // 'cache-config',
